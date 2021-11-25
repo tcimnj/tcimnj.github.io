@@ -11,11 +11,25 @@
 #greeting {
   text-align: center;
   color: white;
-//  font-size: 50px;
   font-size: 4vh;
-  margin-top: 0vh;
-  margin-bottom: 0vh;
 }
+
+@media only screen and (orientation: landscape) {
+	#greeting {
+	  text-align: center;
+	  color: white;
+	  font-size: 4vw;
+	}
+}
+
+@media only screen and (orientation: po) {
+	#greeting {
+	  text-align: center;
+	  color: white;
+	  font-size: 4vh;
+	}
+}
+
 #verse {
   text-align: center;
   font-size: 32px;
