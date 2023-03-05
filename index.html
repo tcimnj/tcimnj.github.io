@@ -1,307 +1,298 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 
 <head>
-<title>马波罗的歌</title>
+    <title>YouTube Video Player</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
-<meta name="viewport" http-equiv="Content-Type" content="width=device-width; text/html; charset=utf-8"/>
+        #player {
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%;
+            /* 16:9 aspect ratio */
+        }
 
+        #video-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
 
-<style>
-#greeting {
-  text-align: center;
-  color: white;
-  font-size: 4vh;
-}
+        #video-list li {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-@media only screen and (orientation: landscape) {
-	#greeting {
-	  text-align: center;
-	  color: white;
-	  font-size: 4vw;
-	}
-}
+        #video-list li:hover {
+            background-color: #f2f2f2;
+        }
 
-#verse {
-  text-align: center;
-  font-size: 32px;
-  margin-top: 0vh;
-  margin-bottom: 0vh;
-  margin-left: 0vw;
-  margin-right: 0vw;
-}
-div {
-  text-align: center;
-  margin-top: 0.0em;
-}
-#player {
-  text-align: center;
-   position: relative;
-   width: 100%;
-   height: 90vh;
-   padding-top: 0.0%; /* 16:9 Aspect Ratio */  
-}
+        #video-list li img {
+            width: 64px;
+            height: 48px;
+            margin-right: 10px;
+        }
 
-.dropbtn {
-  background-color: #3498DB;
-  color: white;
-  //padding: 16px 6px 16px 6px;
-  padding: 2vh 1vw 2vh 1vw;
-  font-size: 4vh;
-  border: none;
-  cursor: pointer;
-  //width: 48px;
-  //transform:rotate(-90deg);
-}
+        #video-list li span {
+            flex-grow: 1;
+        }
 
-.dropbtn:hover, .dropbtn:focus {
-  background-color: #2980B9;
-}
+        #control-panel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
 
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
+        #control-panel button {
+            margin: 0 10px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: #f2f2f2;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-.dropdown-content {
-  display: none;
-  position: relative; //  position: absolute;
-  background-color: #f1f1f1;
-  min-width: 40vw;
-  overflow: auto;
-  //box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-}
-
-.dropdown-content a {
-  color: black;
-  padding: 2px 6px;
-  text-decoration: none;
-  display: block;
-  text-align: left;
-  font-size: 4vw;
-}
-
-.dropdown a:hover {background-color: #ddd;}
-
-.show {display: block;}
-
-.th1 {
-  text-align: left;
-  //width: 1%
-}
-.th2 {
-  text-align: center;
-  width: 98%
-}
-}
-.th3 {
-  text-align: top;
-  width: 2%
-}
-table {
-  //text-align: center;
-  //width: 100%;
-}
-body {
-	background-color: black; //#1c87c9;
-}
-
-
-</style>
+        #control-panel button:hover {
+            background-color: #ddd;
+        }
+    </style>
 </head>
 
 <body>
+    <!-- Video player -->
+    <div id="player"></div>
 
-<table>
-  <tr>
-	<th rowspan="2"class="th2">
-		<div id="greeting">马波罗教会歌选</div>
-		<div class="player-container" id="player"></div> 	
-	</th>
-	<th class="th3">
-	  <div class="dropdown">
-	  <button onclick="myFunction()" class="dropbtn">歌单</button>
-		  <div id="myDropdown" class="dropdown-content">
-		  </div>
-	  </div>	
-	</th>	
-  </tr>	
-  <tr>
-	<th class="th3">
-	  <div class="dropdown">
-	  <button onclick="reloadPage()" class="dropbtn">下一首</button>
-	  </div>	
-	</th>  
-  </tr>
-</table>
- 
-<script>
+    <!-- Video menu/list -->
+    <ul id="video-list"></ul>
 
-/* When the user clicks on the button, 
-toggle between hiding and showing the dropdown content */
-function myFunction() {
-  document.getElementById("myDropdown").classList.toggle("show");
-}
+    <!-- Control panel -->
+    <div id="control-panel">
+        <button id="prev-button">Previous</button>
+        <button id="play-pause-button">Play/Pause</button>
+        <button id="next-button">Next</button>
+        <label>
+            <input type="checkbox" id="random-switch">
+            Random
+        </label>
+    </div>
 
-// Close the dropdown if the user clicks outside of it
-window.onclick = function(event) {
-  if (!event.target.matches('.dropbtn')) {
-    var dropdowns = document.getElementsByClassName("dropdown-content");
-    var i;
-    for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
-    }
-  }
-}
-</script>
-
-<script>
-	var url = window.location.href.toString();
-	var song = url.substring(url.lastIndexOf("=")+1);
-	if(!song)
-		console.log('song is not set');
-	else {
-		console.log('url=' + url);
-		console.log('song=' + song);
-	}
-</script>
-<script>
-        var videos = [
-		  {"videoId":"h-LgRJiNRao","name":"这是耶和华所定的曰子"},		
-		  {"videoId":"MLwHDjMGlGw","name":"更美的家乡"},		
-		  {"videoId":"QrFW_1ijY5M","name":"耶和华是爱"},		
-		  {"videoId":"96WDXhk6qjU","name":"有一天"},
-		  {"videoId":"nuK3oi7-YoM","name":"你坐著為王"},	
-		  {"videoId":"QIwM0MJ7qLI","name":"今生跟随主耶稣"},
-		  {"videoId":"PlZOC3fdeus","name":"Hi Ne Ni 我在這裡"},
-		  {"videoId":"tPf7Ig1ebL4","name":"这一生最美的祝福"},
-		  {"videoId":"bhS0D7Gd-Ek","name":"我要向高山舉目"},
-		  {"videoId":"nmd0bLtRqu8","name":"我知誰掌管明天"},
-		  {"videoId":"fvUsgi3gxJU","name":"最知心的朋友"},
-		  {"videoId":"UXdQ80sUIZM","name":"充滿我"},
-		  {"videoId":"O164IvfKbLA","name":"耶稣听我的呼求"},
-		  {"videoId":"VMC5Wo6CaTk","name":"野地的花"},
-		  {"videoId":"-fLdDev9iqo","name":"我心屬於你"},
-		  {"videoId":"5Pe2csSjlXU","name":"恩典的記號"},
-		  {"videoId":"Ay1Yj84-hhU","name":"深深愛祢"},
-		  {"videoId":"-kHB_L11P_U","name":"你的愛不離不棄"},
-		  {"videoId":"dvtU_zoSmFM","name":"空谷的回音"},
-		  {"videoId":"Q6g2g_qnCB0","name":"轻轻听 輕輕聽"},
-		  {"videoId":"vVTAOvZV1HM","name":"耶穌愛你"},
-		  {"videoId":"seusEUDAPK4","name":"純音樂_何等恩典"},
-		  {"videoId":"Sd--GtZJ9wc","name":"哈利路亞"},
-		  {"videoId":"2Y4vZn28JxY","name":"最好的福氣"},
-		  {"videoId":"Tkd3D7m8YCk","name":"能不能一生愛祢"},
-		  {"videoId":"Y2aXZIBg7XI","name":"主啊我能做什么"},		  
-		  {"videoId":"ksANigSjZ-4","name":"雨後的天空"},
-		  {"videoId":"Xins1HYD49w","name":"不能忘记"},
-		  {"videoId":"P8R9_oEFgdg","name":"有一位神"},
-		  {"videoId":"u2M-zzt1Whc","name":"何等恩典"},
-		  {"videoId":"4j8abyGAmj0","name":"唯有耶穌"},
-		  {"videoId":"v76-wz1mv8w","name":"祢的恩典夠我用"},
-		  {"videoId":"MLwHDjMGlGw","name":"更美的家鄉"}	  
-	  ];
-        
-      // 2. This code loads the IFrame Player API code asynchronously.
-      var tag = document.createElement('script');
-
-      tag.src = "https://www.youtube.com/iframe_api";
-      var firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-      // 3. This function creates an <iframe> (and YouTube player)
-      //    after the API code downloads.
-      var player;
-      function onYouTubeIframeAPIReady() {
-        player = createPlayer(getNextVideo());
-		console.log('*** onYouTubeIframeAPIReady is reaady');		
-      }
-
-      // 4. The API will call this function when the video player is ready.
-      function onPlayerReady(event) {
-        event.target.playVideo();
-		console.log('*** player is reaady');
-      }
-      
-      function createPlayer(_videoId) {
-        player = new YT.Player('player', {
-          //height: '570',
-          //width: '940',
-          videoId: _videoId,
-          playerVars: {
-            'playsinline': 1
-          },
-          events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
-          }
-        });
-        return player;
-      }
-
-      // 5. The API calls this function when the player's state changes.
-      //    The function indicates that when playing a video (state=1),
-      //    the player should play for six seconds and then stop.
-      var done = false;
-      function onPlayerStateChange(event) {
-        //YT.PlayerState.ENDED
-        //YT.PlayerState.PLAYING
-        //YT.PlayerState.PAUSED
-        //YT.PlayerState.BUFFERING
-        //YT.PlayerState.CUED
-
-        if (event.data == YT.PlayerState.ENDED) {
-			console.log('*** player has ENDED');		
-        	player.loadVideoById(getNextVideo()); //this will start playing
-            player.playVideo();  //this line does not seem doing anything
+    <!-- Load the YouTube API and initialize the player -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        let player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '360',
+                width: '640',
+                videoId: 'VIDEO_ID',
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
         }
-      }
-      function stopVideo() {
-        player.stopVideo();
-      }
-      function getNextVideo() {	
-		var	songIdx = Math.floor(Math.random(new Date().getMilliseconds()) * videos.length);
-		
-		if(!isNaN(song))
-			songIdx = song - 1; //if the querystring already specifies a video, only play that one
-
-		//console.log('*** songIdx=' + songIdx);
-
-      	return videos[songIdx].videoId;
-      }
+        function onPlayerReady(event) {
+            event.target.playVideo();
+        }
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+                playNextVideo();
+            }
+        }
     </script>
-	
-	<script>
-	var baseURL = url;
-	var div = document.getElementById('myDropdown');
-	if(url.indexOf('?') > 0)
-		baseURL = url.substring(0,url.indexOf('?'));
-		
-	var newlink = document.createElement('a');
-	newlink.setAttribute('href', baseURL);
-	newlink.innerHTML='0 **Play Randomly**';
-	div.appendChild(newlink);
-		
-	videos.forEach((video, index, fullArray) =>  {  
-		//document.writeln(video);
-		//console.log('** video=' + video.name);
-		newlink = document.createElement('a');
-		newlink.setAttribute('href', baseURL + '?video=' + (index+1));
-		newlink.innerHTML=(index+1) + ' ' + video.name;
-		div.appendChild(newlink);	  
-	});
-	
 
-	function reloadPage()
-	  {
-	  //window.location.reload();
-	  window.location.href = baseURL;
-	  }
-	
-	</script>	
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Video links
+        const videoLinks = [
+            'https://www.youtube.com/watch?v=MLwHDjMGlGw',
+            'https://www.youtube.com/watch?v=nuK3oi7-YoM'
+        ];
+
+        // Shuffle an array randomly
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Get video information from YouTube API
+        function getVideoInfo(videoId) {
+            const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=AIzaSyB3oj2D2HGdjEubTK7eaL1mceZKFl9VawE`;
+            return fetch(url)
+                .then(response => response.json())
+                .then(data => data.items[0].snippet);
+        }
+
+        // Populate the video menu/list
+        async function populateVideoList() {
+            const videoList = document.getElementById('video-list');
+            for (let i = 0; i < videoLinks.length; i++) {
+                const videoId = videoLinks[i].split('v=')[1];
+                const videoInfo = await getVideoInfo(videoId);
+                const videoTitle = videoInfo.title;
+                const videoThumbnail = videoInfo.thumbnails.medium.url;
+                const listItem = `
+                    <li data-video-id="${videoId}">
+                        <img src="${videoThumbnail}">
+                        <span>${videoTitle}</span>
+                    </li>
+                    `;
+                videoList.insertAdjacentHTML('beforeend', listItem);
+            }
+        }
+
+        // Play the first video in the list
+        function playFirstVideo() {
+            if (videoLinks.length > 0) {
+                const videoId = videoLinks[0].split('v=')[1];
+                player.cueVideoById(videoId);
+                // Highlight the first video in the list
+                const firstListItem = document.querySelector('#video-list li');
+                firstListItem.classList.add('active');
+            }
+        }
+
+        // Play the next video in the list
+        function playNextVideo() {
+            // Get the current video index
+            const currentVideoIndex = videoLinks.findIndex(link => link.includes(player.getVideoData().video_id));
+
+            // Get the next video index
+            let nextVideoIndex;
+            if (document.getElementById('random-switch').checked) {
+                // Play a random video
+                const shuffledLinks = [...videoLinks];
+                shuffleArray(shuffledLinks);
+                const shuffledVideoIndex = shuffledLinks.findIndex(link => link.includes(player.getVideoData().video_id));
+                nextVideoIndex = shuffledVideoIndex === shuffledLinks.length - 1 ? 0 : shuffledVideoIndex + 1;
+            } else {
+                // Play the next sequential video
+                nextVideoIndex = currentVideoIndex === videoLinks.length - 1 ? 0 : currentVideoIndex + 1;
+            }
+
+            // Get the next video ID
+            const nextVideoId = videoLinks[nextVideoIndex].split('v=')[1];
+
+            // Load the next video
+            player.loadVideoById(nextVideoId);
+
+            // Highlight the next video in the list
+            const currentListItem = document.querySelector(`#video-list li[data-video-id="${player.getVideoData().video_id}"]`);
+            currentListItem.classList.remove('active');
+            const nextListItem = document.querySelector(`#video-list li[data-video-id="${nextVideoId}"]`);
+            nextListItem.classList.add('active');
+        }
+
+        // Play the previous video in the list
+        function playPrevVideo() {
+            // Get the current video index
+            const currentVideoIndex = videoLinks.findIndex(link => link.includes(player.getVideoData().video_id));
+
+            // Get the previous video index
+            let prevVideoIndex;
+            if (document.getElementById('random-switch').checked) {
+                // Play a random video
+                const shuffledLinks = [...videoLinks];
+                shuffleArray(shuffledLinks);
+                const shuffledVideoIndex = shuffledLinks.findIndex(link => link.includes(player.getVideoData().video_id));
+                prevVideoIndex = shuffledVideoIndex === 0 ? shuffledLinks.length - 1 : shuffledVideoIndex - 1;
+            } else {
+                // Play the previous sequential video
+                prevVideoIndex = currentVideoIndex === 0 ? videoLinks.length - 1 : currentVideoIndex - 1;
+            }
+
+            // Get the previous video ID
+            const prevVideoId = videoLinks[prevVideoIndex].split('v=')[1];
+
+            // Load the previous video
+            player.loadVideoById(prevVideoId);
+
+            // Highlight the previous video in the list
+            const currentListItem = document.querySelector(`#video-list li[data-video-id="${player.getVideoData().video_id}"]`);
+            currentListItem.classList.remove('active');
+            const prevListItem = document.querySelector(`#video-list li[data-video-id="${prevVideoId}"]`);
+            prevListItem.classList.add('active');
+        }
+
+        // Toggle play/pause button
+        function togglePlayPauseButton() {
+            if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+                player.pauseVideo();
+                document.getElementById('play-pause-button').textContent = 'Play';
+            } else {
+                player.playVideo();
+                document.getElementById('play-pause-button').textContent = 'Pause';
+            }
+        }
+
+        // Highlight the selected video in the list
+        function highlightVideoListItem(videoId) {
+            const currentListItem = document.querySelector(`#video-list li.active`);
+            if (currentListItem) {
+                currentListItem.classList.remove('active');
+            }
+            const nextListItem = document.querySelector(`#video-list li[data-video-id="${videoId}"]`);
+            nextListItem.classList.add('active');
+        }
+
+        // When the document is ready
+        $(document).ready(function () {
+            // Populate the video menu/list
+            populateVideoList();
+
+            // Handle click event for video list items
+            $('#video-list').on('click', 'li', function () {
+                const videoId = $(this).attr('data-video-id');
+                player.loadVideoById(videoId);
+                highlightVideoListItem(videoId);
+            });
+
+            // Handle click event for control panel buttons
+            $('#prev-button').click(function () {
+                playPrevVideo();
+            });
+            $('#play-pause-button').click(function () {
+                togglePlayPauseButton();
+            });
+            $('#next-button').click(function () {
+                playNextVideo();
+            });
+
+            // Handle change event for random switch
+            $('#random-switch').change(function () {
+                playNextVideo();
+            });
+
+            // Initialize the player when the YouTube API is ready
+            function onYouTubeIframeAPIReady() {
+                player = new YT.Player('player', {
+                    height: '360',
+                    width: '640',
+                    videoId: '',
+                    events: {
+                        'onReady': onPlayerReady,
+                        'onStateChange': onPlayerStateChange
+                    }
+                });
+            }
+            window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+        });
+    </script>
 </body>
+
 </html>
