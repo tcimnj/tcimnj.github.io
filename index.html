@@ -290,7 +290,7 @@
         }
 
         function playFirstVideo() {
-            if (videoLinks.length > 0) {
+            if (videoLinks.length > 0 && player) {
                 // Choose a random video from the list
                 const randomIndex = Math.floor(Math.random() * videoLinks.length);
                 const videoId = videoLinks[randomIndex].split('v=')[1];
