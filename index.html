@@ -123,7 +123,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 10px;
+            margin-top: 30px;
         }
     </style>
 </head>
@@ -353,19 +353,19 @@
 
         // Toggle play/pause button
         function togglePlayPauseButton() {
+            const button = document.getElementById('play-pause-button');
+            const playerContainer = document.getElementById('player');
+
             if (player.getPlayerState() === YT.PlayerState.PLAYING) {
                 player.pauseVideo();
-                document.getElementById('play-pause-button').textContent = 'Play';
-                const playerContainer = document.getElementById('player');
-                // playerContainer.style.display = 'none';
+                button.innerHTML = '<i class="fas fa-play"></i>';
+                playerContainer.style.display = 'none';
             } else {
                 player.playVideo();
-                document.getElementById('play-pause-button').textContent = 'Pause';
-                const playerContainer = document.getElementById('player');
+                button.innerHTML = '<i class="fas fa-pause"></i>';
                 playerContainer.style.display = 'block';
             }
         }
-
 
         // Highlight the selected video in the list
         function highlightVideoListItem(videoId) {
