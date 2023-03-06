@@ -96,6 +96,7 @@
         #control-panel button {
             margin: 0 10px;
             padding: 5px 10px;
+            font-size: 22px;
             border-radius: 5px;
             border: none;
             background-color: #f2f2f2;
@@ -386,7 +387,7 @@
                 const isChecked = $('#random-switch').attr('aria-checked') === 'true';
                 updateButtonAppearance(isChecked);
             });
-            
+
             // Handle click event for video list items
             $('#video-list').on('click', 'li', function () {
                 const videoId = $(this).attr('data-video-id');
