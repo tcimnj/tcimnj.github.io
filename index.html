@@ -259,7 +259,7 @@
         }
 
         function playFirstVideo() {
-            if (videoLinks.length > 0) {
+            if (videoLinks.length > 0 && player) {
                 const videoId = videoLinks[0].split('v=')[1];
                 player.loadVideoById(videoId);
                 player.pauseVideo();
