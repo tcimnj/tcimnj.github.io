@@ -359,12 +359,11 @@
             if (player.getPlayerState() === YT.PlayerState.PLAYING) {
                 player.pauseVideo();
                 button.innerHTML = '<i class="fas fa-play"></i>';
-                playerContainer.style.display = 'none';
             } else {
                 player.playVideo();
                 button.innerHTML = '<i class="fas fa-pause"></i>';
-                playerContainer.style.display = 'block';
             }
+            playerContainer.style.display = 'block';
         }
 
         // Highlight the selected video in the list
