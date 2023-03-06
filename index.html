@@ -14,6 +14,7 @@
             margin: 0;
             padding: 0;
             overflow-x: scroll;
+            background-color: rgb(65, 66, 69);
         }
 
         #player-container {
@@ -325,19 +326,19 @@
         }
 
         function playVideoAt(videIndex) {
-            // Get the previous video ID
+            // Get the video ID
             const videoId = videoLinks[videIndex].split('v=')[1];
 
-            // Load the previous video
+            // Load the video
             player.loadVideoById(videoId);
 
-            // Highlight the previous video in the list
+            // Highlight the video in the list
             const currentListItem = document.querySelector(`#video-list li.active`);
             currentListItem.classList.remove('active');
-            const prevListItem = document.querySelector(`#video-list li[data-video-id="${videoId}"]`);
-            prevListItem.classList.add('active');
+            const newListItem = document.querySelector(`#video-list li[data-video-id="${videoId}"]`);
+            newListItem.classList.add('active');
 
-            scrollToSelected(currentListItem);
+            scrollToSelected(newListItem);
 
             // Show the player
             player.getIframe().style.display = 'block';
