@@ -5,12 +5,15 @@
     <title>马波罗的歌</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
+        crossorigin="anonymous" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            overflow-x: scroll;
         }
 
         #player-container {
@@ -82,6 +85,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
             padding: 10px;
             position: absolute;
             bottom: 10px;
@@ -102,6 +106,24 @@
         #control-panel button:hover {
             background-color: #ddd;
         }
+
+        #control-panel-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #control-panel-row button {
+            margin: 0 10px;
+            padding: 5px 10px;
+        }
+
+        #control-panel-row2 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
     </style>
 </head>
 
@@ -119,14 +141,17 @@
 
     <!-- Control panel -->
     <div id="control-panel">
-        <button id="prev-button">Previous</button>
-        <button id="play-pause-button">Play/Pause</button>
-        <button id="next-button">Next</button>
-        <button id="toggle-list-button">Video List</button>
-        <label>
-            <input type="checkbox" id="random-switch">
-            Random
-        </label>
+        <div id="control-panel-row">
+            <button id="prev-button"><i class="fas fa-backward"></i></button>
+            <button id="play-pause-button"><i class="fas fa-play"></i></button>
+            <button id="next-button"><i class="fas fa-forward"></i></button>
+        </div>
+        <div id="control-panel-row2">
+            <button id="random-switch" class="toggle-button" aria-checked="true">
+                <span><i class="fas fa-random"></i></span>
+            </button>
+            <button id="toggle-list-button"><i class="fas fa-list"></i></button>
+        </div>
     </div>
 
     <!-- Load the YouTube API and initialize the player -->
@@ -199,6 +224,7 @@
                 const j = Math.floor(Math.random() * (i + 1));
                 [array[i], array[j]] = [array[j], array[i]];
             }
+            return array;
         }
 
         // Get video information from YouTube API
@@ -247,33 +273,19 @@
 
             // Get the next video index
             let nextVideoIndex;
-            if (document.getElementById('random-switch').checked) {
+            // if (document.getElementById('random-switch').checked) {
+            if (document.getElementById('random-switch').getAttribute('aria-checked') === 'true') {
                 // Play a random video
-                const shuffledLinks = [...videoLinks];
-                shuffleArray(shuffledLinks);
+                const shuffledLinks = shuffleArray([...videoLinks]);
                 const shuffledVideoIndex = shuffledLinks.findIndex(link => link.includes(player.getVideoData()?.video_id));
                 nextVideoIndex = shuffledVideoIndex === shuffledLinks.length - 1 ? 0 : shuffledVideoIndex + 1;
+                console.log('random playNextVideo: ' + 'shuffledVideoIndex=' + shuffledVideoIndex + ', nextVideoIndex=' + nextVideoIndex);
             } else {
                 // Play the next sequential video
                 nextVideoIndex = currentVideoIndex === videoLinks.length - 1 ? 0 : currentVideoIndex + 1;
             }
 
-            // Get the next video ID
-            const nextVideoId = videoLinks[nextVideoIndex].split('v=')[1];
-
-            // Load the next video
-            player.loadVideoById(nextVideoId);
-
-            // Highlight the next video in the list
-            const currentListItem = document.querySelector(`#video-list li[data-video-id="${player.getVideoData()?.video_id}"]`);
-            if (currentListItem) {
-                currentListItem.classList.remove('active');
-            }
-            const nextListItem = document.querySelector(`#video-list li[data-video-id="${nextVideoId}"]`);
-            nextListItem.classList.add('active');
-
-            // Show the player
-            player.getIframe().style.display = 'block';
+            playVideoAt(nextVideoIndex);
         }
 
         function playFirstVideo() {
@@ -290,40 +302,53 @@
             }
         }
 
-
         function playPrevVideo() {
             // Get the current video index
             const currentVideoIndex = videoLinks.findIndex(link => link.includes(player.getVideoData().video_id));
 
             // Get the previous video index
             let prevVideoIndex;
-            if (document.getElementById('random-switch').checked) {
+            // if (document.getElementById('random-switch').checked) {
+            if (document.getElementById('random-switch').getAttribute('aria-checked') === 'true') {
                 // Play a random video
-                const shuffledLinks = [...videoLinks];
-                shuffleArray(shuffledLinks);
-                const shuffledVideoIndex = shuffledLinks.findIndex(link => link.includes(player.getVideoData().video_id));
-                prevVideoIndex = shuffledVideoIndex === 0 ? shuffledLinks.length - 1 : shuffledVideoIndex - 1;
+                const shuffledLinks = shuffleArray([...videoLinks]);
+                const shuffledVideoIndex = shuffledLinks.findIndex(link => link.includes(player.getVideoData()?.video_id));
+                prevVideoIndex = shuffledVideoIndex === shuffledLinks.length - 1 ? 0 : shuffledVideoIndex + 1;
+                console.log('random playPrevVideo: ' + 'shuffledVideoIndex=' + shuffledVideoIndex + ', prevVideoIndex=' + prevVideoIndex);
             } else {
-                // Play the previous sequential video
+                // Play the previous sequprevVideoIndexntial video
                 prevVideoIndex = currentVideoIndex === 0 ? videoLinks.length - 1 : currentVideoIndex - 1;
             }
 
+            playVideoAt(prevVideoIndex);
+        }
+
+        function playVideoAt(videIndex) {
             // Get the previous video ID
-            const prevVideoId = videoLinks[prevVideoIndex].split('v=')[1];
+            const videoId = videoLinks[videIndex].split('v=')[1];
 
             // Load the previous video
-            player.loadVideoById(prevVideoId);
+            player.loadVideoById(videoId);
 
             // Highlight the previous video in the list
             const currentListItem = document.querySelector(`#video-list li.active`);
             currentListItem.classList.remove('active');
-            const prevListItem = document.querySelector(`#video-list li[data-video-id="${prevVideoId}"]`);
+            const prevListItem = document.querySelector(`#video-list li[data-video-id="${videoId}"]`);
             prevListItem.classList.add('active');
+
+            scrollToSelected(currentListItem);
 
             // Show the player
             player.getIframe().style.display = 'block';
         }
 
+        function scrollToSelected(selectedItem) {
+            const $selectedItem = $(selectedItem);
+            const videoListContainer = $('#video-list-container');
+            const containerHeight = videoListContainer.height();
+            const itemHeight = $selectedItem.outerHeight();
+            videoListContainer.scrollTop($selectedItem.offset().top - videoListContainer.offset().top - (containerHeight - itemHeight) / 2 + videoListContainer.scrollTop());
+        }
 
         // Toggle play/pause button
         function togglePlayPauseButton() {
@@ -356,6 +381,12 @@
             // Populate the video menu/list
             populateVideoList();
 
+            // Ensure the button status and appearance are consistent when the page loads
+            $(document).ready(function () {
+                const isChecked = $('#random-switch').attr('aria-checked') === 'true';
+                updateButtonAppearance(isChecked);
+            });
+            
             // Handle click event for video list items
             $('#video-list').on('click', 'li', function () {
                 const videoId = $(this).attr('data-video-id');
@@ -374,10 +405,24 @@
                 playNextVideo();
             });
 
+            // Function to update the appearance of the button
+            function updateButtonAppearance(isChecked) {
+                if (isChecked) {
+                    $('#random-switch').html('<span><i class="fas fa-random fa-rotate-90"></i></span>');
+                } else {
+                    $('#random-switch').html('<span><i class="fas fa-random"></i></span>');
+                }
+            }
+
             // Handle change event for random switch
-            $('#random-switch').change(function () {
-                playNextVideo();
+            $('#random-switch').click(function () {
+                const isChecked = $(this).attr('aria-checked') === 'true';
+                $(this).attr('aria-checked', !isChecked);
+
+                // Update the appearance of the button
+                updateButtonAppearance(!isChecked);
             });
+
 
             // Handle click event for toggle list button
             $('#toggle-list-button').click(function () {
