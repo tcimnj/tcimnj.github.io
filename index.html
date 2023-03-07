@@ -171,9 +171,13 @@
                 }
             });
         }
+
         function onPlayerReady(event) {
-            event.target.playVideo();
+            // event.target.playVideo();
+            // Play the first video in the list
+            playFirstVideo();
         }
+
         function onPlayerStateChange(event) {
             if (event.data === YT.PlayerState.ENDED) {
                 playNextVideo();
@@ -246,26 +250,12 @@
                 const videoTitle = videoInfo.title;
                 const videoThumbnail = videoInfo.thumbnails.medium.url;
                 const listItem = `
-      <li data-video-id="${videoId}">
-        <img src="${videoThumbnail}">
-        <span>${videoTitle}</span>
-      </li>
-      `;
+                    <li data-video-id="${videoId}">
+                        <img src="${videoThumbnail}">
+                        <span>${videoTitle}</span>
+                    </li>
+                    `;
                 videoList.insertAdjacentHTML('beforeend', listItem);
-            }
-
-            // Play the first video in the list
-            playFirstVideo();
-        }
-
-        function playFirstVideo() {
-            if (videoLinks.length > 0 && player) {
-                const videoId = videoLinks[0].split('v=')[1];
-                player.loadVideoById(videoId);
-                player.pauseVideo();
-                // Highlight the first video in the list
-                const firstListItem = document.querySelector('#video-list li');
-                firstListItem.classList.add('active');
             }
         }
 
@@ -281,7 +271,6 @@
                 const shuffledLinks = shuffleArray([...videoLinks]);
                 const shuffledVideoIndex = shuffledLinks.findIndex(link => link.includes(player.getVideoData()?.video_id));
                 nextVideoIndex = shuffledVideoIndex === shuffledLinks.length - 1 ? 0 : shuffledVideoIndex + 1;
-                console.log('random playNextVideo: ' + 'shuffledVideoIndex=' + shuffledVideoIndex + ', nextVideoIndex=' + nextVideoIndex);
             } else {
                 // Play the next sequential video
                 nextVideoIndex = currentVideoIndex === videoLinks.length - 1 ? 0 : currentVideoIndex + 1;
@@ -316,7 +305,6 @@
                 const shuffledLinks = shuffleArray([...videoLinks]);
                 const shuffledVideoIndex = shuffledLinks.findIndex(link => link.includes(player.getVideoData()?.video_id));
                 prevVideoIndex = shuffledVideoIndex === shuffledLinks.length - 1 ? 0 : shuffledVideoIndex + 1;
-                console.log('random playPrevVideo: ' + 'shuffledVideoIndex=' + shuffledVideoIndex + ', prevVideoIndex=' + prevVideoIndex);
             } else {
                 // Play the previous sequprevVideoIndexntial video
                 prevVideoIndex = currentVideoIndex === 0 ? videoLinks.length - 1 : currentVideoIndex - 1;
@@ -435,18 +423,6 @@
                 $('#video-list-container').removeClass('show');
             });
 
-            // Initialize the player when the YouTube API is ready
-            function onYouTubeIframeAPIReady() {
-                player = new YT.Player('player', {
-                    height: '360',
-                    width: '640',
-                    videoId: '',
-                    events: {
-                        'onReady': onPlayerReady,
-                        'onStateChange': onPlayerStateChange
-                    }
-                });
-            }
             window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
         });
 
