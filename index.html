@@ -191,6 +191,7 @@
     </script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dotenv@10.0.0/dist/dotenv.min.js"></script>
     <script>
         // Video links
         const videoLinks = [
@@ -235,6 +236,7 @@
 
         // Get video information from YouTube API
         function getVideoInfo(videoId) {
+            dotenv.config();
             var apiKey = process.env.API_KEY;
             const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`;
             return fetch(url)
